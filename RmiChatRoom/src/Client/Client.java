@@ -1,25 +1,36 @@
 package Client;
 
-import RemoteInterfaces.HelloSayerInterface;
+import RemoteInterfaces.ClientSide.ListenerIF;
+import RemoteInterfaces.ServerSide.SenderIF;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
-public class Client {
+public class Client   {
 
     public static void main(String[] args) {
+        if(args[0]==null){
+            System.out.println("Example run: java Client <name>");
+            return;
+        }
         try {
-            // Getting the registry
-            Registry registry = LocateRegistry.getRegistry();
-            // Looking up the registry for the remote object
-            HelloSayerInterface stub = (HelloSayerInterface) registry.lookup("HelloSayerInterface");
-            // Calling the remote method using the obtained object
-            stub.sayHello();
-            // System.out.println("Remote method invoked");
-        } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
+            SenderIF server = (SenderIF) Naming.lookup("rmi://localhost/Chat");
+            Listener listener = new Listener(server,args[0]);
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
+
+
 }
 
