@@ -1,36 +1,53 @@
 package Client;
 
-import RemoteInterfaces.ClientSide.ListenerIF;
-import RemoteInterfaces.ServerSide.SenderIF;
+import RemoteInterfaces.ClientSide.ClientIF;
+import RemoteInterfaces.ServerSide.ServerIF;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
-public class Client   {
+public class Client extends UnicastRemoteObject implements ClientIF {
 
-    public static void main(String[] args) {
-        if(args[0]==null){
-            System.out.println("Example run: java Client <name>");
-            return;
-        }
+    private String name;
+
+    protected Client(ServerIF server) throws RemoteException {
+        InetAddress address = null;
         try {
-            SenderIF server = (SenderIF) Naming.lookup("rmi://localhost/Chat");
-            Listener listener = new Listener(server,args[0]);
-        } catch (NotBoundException e) {
+            NetworkInterface nwi = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
+            byte mac[] = nwi.getHardwareAddress();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < mac.length; i++) {
+                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+            }
+            name = sb.toString();
+            server.clientConnect(this,name);
+        } catch (UnknownHostException|SocketException e) {
             e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        }
+        Scanner scanner = new Scanner(System.in);
+        while(true){
+            String input = scanner.nextLine();
+            server.recieveMessage(this,input);
         }
     }
 
+    @Override
+    public void displayMsg(String msg) throws RemoteException {
+        System.out.println(msg);
+    }
 
+    @Override
+    public String getName() throws RemoteException {
+        return name;
+    }
+
+    @Override
+    public void setName(String newName) throws RemoteException {
+        name = newName;
+    }
 }
-
