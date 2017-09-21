@@ -11,7 +11,7 @@ public class ServerMain {
 
     private static ArrayList<ClientIF> connectionList = new ArrayList<>();
 
-    public static ArrayList<ClientIF> getConnectionList(){
+    public synchronized static ArrayList<ClientIF> getConnectionList(){
         return connectionList;
     }
 
@@ -32,7 +32,7 @@ public class ServerMain {
                 e.printStackTrace();
             }
         }
-        return null;
+        return result.toString();
     }
 
     public static boolean isNameAvailable(String name){

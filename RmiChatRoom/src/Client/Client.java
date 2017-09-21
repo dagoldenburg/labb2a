@@ -25,7 +25,7 @@ public class Client extends UnicastRemoteObject implements ClientIF {
                 sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
             }
             name = sb.toString();
-            server.clientConnect(this,name);
+            server.clientConnect(this);
         } catch (UnknownHostException|SocketException e) {
             e.printStackTrace();
         }

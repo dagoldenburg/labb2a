@@ -27,47 +27,52 @@ public class Server extends UnicastRemoteObject implements ServerIF {
     }
 
     public void recieveMessage(ClientIF client, String msg){
-        if (msg.charAt(0) == '/') {
-            if (msg.startsWith("/quit")) {
-                ServerMain.getConnectionList().remove(client);
-            } else if (msg.startsWith("/who")) {
-                unicast(client, ServerMain.getClientNames());
-            } else if (msg.startsWith("/nick")) {
-                if (ServerMain.isNameAvailable(msg.substring(6))) {
-                    try {
-                        broadcast(client,client.getName()+" has changed name to "+msg.substring(6));
-                        client.setName(msg.substring(6));
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    unicast(client,"Name is already taken");
-                }
-            } else if (msg.startsWith("/help")) {
-                unicast(client,availableCommands);
-            } else {
-                unicast(client,"Unknown command.");
-            }
-        } else {
-            broadcast(client,msg);
-        }
-    }
-
-    @Override
-    public void broadcast(ClientIF client, String msg) {
-        //TODO: se till att andra klienter inte krashar när en klient försvinner
         try {
-            for(ClientIF lif : ServerMain.getConnectionList()){
-                lif.displayMsg(client.getName()+": "+msg);
+            if (msg.charAt(0) == '/') {
+                if (msg.startsWith("/quit")) {
+                    ServerMain.getConnectionList().remove(client);
+                } else if (msg.startsWith("/who")) {
+                    unicast(client, ServerMain.getClientNames());
+                } else if (msg.startsWith("/nick")) {
+                    if (ServerMain.isNameAvailable(msg.substring(6))) {
+                        try {
+                            broadcast(client, client.getName() + " has changed name to " + msg.substring(6));
+                            client.setName(msg.substring(6));
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        unicast(client, "Name is already taken");
+                    }
+                } else if (msg.startsWith("/help")) {
+                    unicast(client, availableCommands);
+                } else {
+                    unicast(client, "Unknown command.");
+                }
+            } else {
+                broadcast(client, msg);
             }
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        }catch(StringIndexOutOfBoundsException e){
+
+        }
+    }
+
+    @Override
+    public synchronized void broadcast(ClientIF client, String msg) {
+        for(int i = 0;i<ServerMain.getConnectionList().size();i++){
+            try {
+                ServerMain.getConnectionList().get(i).displayMsg(client.getName()+": "+msg);
+            } catch (RemoteException e) {
+                ServerMain.getConnectionList().remove(ServerMain.getConnectionList().get(i));
+                i--;
+            }
         }
     }
 
 
     @Override
-    public synchronized void clientConnect(ClientIF client, String name) throws RemoteException {
+    public synchronized void clientConnect(ClientIF client) throws RemoteException {
+        broadcast(client," has connected");
         ServerMain.getConnectionList().add(client);
     }
 }
