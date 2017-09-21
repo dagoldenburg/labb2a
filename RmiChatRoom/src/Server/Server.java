@@ -30,6 +30,7 @@ public class Server extends UnicastRemoteObject implements ServerIF {
         try {
             if (msg.charAt(0) == '/') {
                 if (msg.startsWith("/quit")) {
+                    broadcast(client," has disconnected");
                     ServerMain.getConnectionList().remove(client);
                 } else if (msg.startsWith("/who")) {
                     unicast(client, ServerMain.getClientNames());
