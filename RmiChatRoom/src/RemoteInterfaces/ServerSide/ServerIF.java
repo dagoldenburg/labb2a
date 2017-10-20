@@ -10,4 +10,5 @@ public interface ServerIF extends Remote {
     void broadcast(ClientIF listener, String msg) throws RemoteException;
     void clientConnect(ClientIF listener) throws RemoteException;
     void recieveMessage(ClientIF listener, String msg) throws RemoteException;
+    void checkIfAlive(ClientIF listener) throws RemoteException;
 }

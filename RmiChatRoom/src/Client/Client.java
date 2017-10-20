@@ -29,10 +29,20 @@ public class Client extends UnicastRemoteObject implements ClientIF {
         } catch (UnknownHostException|SocketException e) {
             e.printStackTrace();
         }
-        Scanner scanner = new Scanner(System.in);
+
+
+    }
+
+    public void runClient(ServerIF server){
+
         while(true){
+            Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
-            server.recieveMessage(this,input);
+            try {
+                server.recieveMessage(this,input);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 

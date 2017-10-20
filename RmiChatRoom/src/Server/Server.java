@@ -69,6 +69,11 @@ public class Server extends UnicastRemoteObject implements ServerIF {
             }
         }
     }
+    
+    @Override
+    public synchronized void checkIfAlive(ClientIF client){
+
+    }
 
 
     @Override

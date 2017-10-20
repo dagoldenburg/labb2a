@@ -25,11 +25,12 @@ public class ServerMain {
 
     public static String getClientNames(){
         StringBuilder result = new StringBuilder();
-        for(ClientIF lif:connectionList){
+        for(int i = 0;i<ServerMain.getConnectionList().size();i++){
             try {
-                result.append(lif.getName()+'\n');
+                result.append(ServerMain.getConnectionList().get(i).getName()+"\n");
             } catch (RemoteException e) {
-                e.printStackTrace();
+                ServerMain.getConnectionList().remove(ServerMain.getConnectionList().get(i));
+                i--;
             }
         }
         return result.toString();
