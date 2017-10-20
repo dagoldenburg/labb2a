@@ -65,11 +65,13 @@ public class Server extends UnicastRemoteObject implements ServerIF {
                 ServerMain.getConnectionList().get(i).displayMsg(client.getName()+": "+msg);
             } catch (RemoteException e) {
                 ServerMain.getConnectionList().remove(ServerMain.getConnectionList().get(i));
+                //System.out.println(ServerMain.getNameList().get(i));
+                //ServerMain.getNameList().remove(ServerMain.getNameList().get(i));
                 i--;
             }
         }
     }
-    
+
     @Override
     public synchronized void checkIfAlive(ClientIF client){
 
@@ -80,5 +82,6 @@ public class Server extends UnicastRemoteObject implements ServerIF {
     public synchronized void clientConnect(ClientIF client) throws RemoteException {
         broadcast(client," has connected");
         ServerMain.getConnectionList().add(client);
+        //ServerMain.getNameList().add(client.getName());
     }
 }

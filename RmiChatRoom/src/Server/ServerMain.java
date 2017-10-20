@@ -11,6 +11,12 @@ public class ServerMain {
 
     private static ArrayList<ClientIF> connectionList = new ArrayList<>();
 
+    //private static ArrayList<String> nameList = new ArrayList<>();
+
+    //public synchronized static ArrayList<String> getNameList(){
+    //    return nameList;
+    //}
+
     public synchronized static ArrayList<ClientIF> getConnectionList(){
         return connectionList;
     }
@@ -30,6 +36,8 @@ public class ServerMain {
                 result.append(ServerMain.getConnectionList().get(i).getName()+"\n");
             } catch (RemoteException e) {
                 ServerMain.getConnectionList().remove(ServerMain.getConnectionList().get(i));
+                //System.out.println(ServerMain.getNameList().get(i));
+                //ServerMain.getNameList().remove(ServerMain.getNameList().get(i));
                 i--;
             }
         }
